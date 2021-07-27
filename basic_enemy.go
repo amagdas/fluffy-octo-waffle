@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -13,20 +11,12 @@ type basicEnemy struct {
 	x, y float64
 }
 
-func newBasicEnemy(renderer *sdl.Renderer, x, y float64) (en basicEnemy, err error) {
-	img, err := sdl.LoadBMP("sprites/basic_enemy.bmp")
-	if err != nil {
-		return basicEnemy{}, fmt.Errorf("loading basic enemy sprite, %v", err)
-	}
-	defer img.Free()
+func newBasicEnemy(renderer *sdl.Renderer, x, y float64) (en basicEnemy) {
+	en.tex = textureFromBMP(renderer, "sprites/basic_enemy.bmp")
 
-	en.tex, err = renderer.CreateTextureFromSurface(img)
-	if err != nil {
-		return basicEnemy{}, fmt.Errorf("create basic enemy texture, %v", err)
-	}
 	en.x = x
 	en.y = y
-	return en, nil
+	return en
 }
 
 func (en *basicEnemy) draw(renderer *sdl.Renderer) {
@@ -35,8 +25,8 @@ func (en *basicEnemy) draw(renderer *sdl.Renderer) {
 	y := en.y - basicEnemySize/2.0
 
 	renderer.CopyEx(en.tex,
-		&sdl.Rect{X: 0, Y: 0, W: 105, H: 105},
-		&sdl.Rect{X: int32(x), Y: int32(y), W: 105, H: 105}, 180,
+		&sdl.Rect{X: 0, Y: 0, W: basicEnemySize, H: basicEnemySize},
+		&sdl.Rect{X: int32(x), Y: int32(y), W: basicEnemySize, H: basicEnemySize}, 180,
 		&sdl.Point{X: basicEnemySize / 2, Y: basicEnemySize / 2},
 		sdl.FLIP_NONE)
 }
