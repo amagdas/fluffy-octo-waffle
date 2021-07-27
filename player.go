@@ -39,9 +39,13 @@ func (p *player) update() {
 	keys := sdl.GetKeyboardState()
 
 	if keys[sdl.SCANCODE_LEFT] == 1 {
-		p.x -= playerSpeed
+		if p.x-(playerSize/2.0) > 0 {
+			p.x -= playerSpeed
+		}
 	} else if keys[sdl.SCANCODE_RIGHT] == 1 {
-		p.x += playerSpeed
+		if p.x+(playerSize/2.0) < screenWidth {
+			p.x += playerSpeed
+		}
 	}
 	if keys[sdl.SCANCODE_SPACE] == 1 {
 		if time.Since(p.lastShot) < playerShotCooldown {
