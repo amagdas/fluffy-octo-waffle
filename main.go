@@ -11,20 +11,6 @@ const (
 	screenHeight = 800
 )
 
-func textureFromBMP(renderer *sdl.Renderer, filename string) *sdl.Texture {
-	img, err := sdl.LoadBMP(filename)
-	if err != nil {
-		panic(fmt.Errorf("loading %v: %v", filename, err))
-	}
-	defer img.Free()
-
-	tex, err := renderer.CreateTextureFromSurface(img)
-	if err != nil {
-		panic(fmt.Errorf("creating texture %v: %v", filename, err))
-	}
-	return tex
-}
-
 func main() {
 	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
 		fmt.Println("initializing SDL:", err)
@@ -51,7 +37,6 @@ func main() {
 	defer renderer.Destroy()
 
 	playerEntity := newPlayer(renderer)
-	defer playerEntity.tex.Destroy()
 
 	var enemies []basicEnemy
 
@@ -77,9 +62,16 @@ func main() {
 		renderer.SetDrawColor(0, 255, 0, 255)
 		renderer.Clear()
 
-		playerEntity.draw(renderer)
-		playerEntity.update()
-
+		err := playerEntity.draw(renderer)
+		if err != nil {
+			fmt.Println("drawing player:", err)
+			return
+		}
+		err = playerEntity.update()
+		if err != nil {
+			fmt.Println("updating player:", err)
+			return
+		}
 		for _, enemy := range enemies {
 			enemy.draw(renderer)
 		}
