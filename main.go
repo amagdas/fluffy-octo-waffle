@@ -77,11 +77,6 @@ func main() {
 			}
 		}
 
-		for _, bul := range bulletPool {
-			bul.draw(renderer)
-			bul.update()
-		}
-
 		renderer.Present()
 	}
 }
