@@ -7,6 +7,8 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 )
 
+var elements []*element
+
 type vector struct {
 	x, y float64
 }

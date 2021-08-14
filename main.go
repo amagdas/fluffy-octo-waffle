@@ -36,17 +36,16 @@ func main() {
 	}
 	defer renderer.Destroy()
 
-	playerEntity := newPlayer(renderer)
-
-	var enemies []basicEnemy
+	player := newPlayer(renderer)
+	elements = append(elements, player)
 
 	for i := 0; i < 5; i++ {
 		for j := 0; j < 3; j++ {
 			x := (float64(i)/5)*screenWidth + (basicEnemySize / 2.0)
 			y := float64(j)*basicEnemySize + (basicEnemySize / 2.0)
 
-			enemy := newBasicEnemy(renderer, x, y)
-			enemies = append(enemies, enemy)
+			enemy := newBasicEnemy(renderer, vector{x, y})
+			elements = append(elements, enemy)
 		}
 	}
 
@@ -62,18 +61,20 @@ func main() {
 		renderer.SetDrawColor(0, 255, 0, 255)
 		renderer.Clear()
 
-		err := playerEntity.draw(renderer)
-		if err != nil {
-			fmt.Println("drawing player:", err)
-			return
-		}
-		err = playerEntity.update()
-		if err != nil {
-			fmt.Println("updating player:", err)
-			return
-		}
-		for _, enemy := range enemies {
-			enemy.draw(renderer)
+		for _, elem := range elements {
+			if elem.active {
+				err = elem.update()
+				if err != nil {
+					fmt.Println("updating element:", err)
+					return
+				}
+
+				err = elem.draw(renderer)
+				if err != nil {
+					fmt.Println("drawing element:", err)
+					return
+				}
+			}
 		}
 
 		for _, bul := range bulletPool {
