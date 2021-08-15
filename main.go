@@ -2,14 +2,18 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/veandco/go-sdl2/sdl"
 )
 
 const (
-	screenWidth  = 600
-	screenHeight = 800
+	screenWidth          = 600
+	screenHeight         = 800
+	targetTicksPerSecond = 60
 )
+
+var delta float64
 
 func main() {
 	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
@@ -52,6 +56,8 @@ func main() {
 	initBulletPool(30, renderer)
 
 	for {
+		frameStartTime := time.Now()
+
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 			switch event.(type) {
 			case *sdl.QuitEvent:
@@ -83,5 +89,8 @@ func main() {
 		}
 
 		renderer.Present()
+		//Introduce a fake delay to test slower hardware
+		//time.Sleep(time.Millisecond * 50)
+		delta = time.Since(frameStartTime).Seconds() * targetTicksPerSecond
 	}
 }

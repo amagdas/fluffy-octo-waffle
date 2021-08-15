@@ -24,8 +24,8 @@ func (mover *bulletMover) onDraw(renderer *sdl.Renderer) error {
 
 func (mover *bulletMover) onUpdate() error {
 	cont := mover.container
-	cont.position.x += mover.speed * math.Cos(cont.rotation)
-	cont.position.y += mover.speed * math.Sin(cont.rotation)
+	cont.position.x += mover.speed * math.Cos(cont.rotation) * delta
+	cont.position.y += mover.speed * math.Sin(cont.rotation) * delta
 
 	if cont.position.x > screenWidth || cont.position.x < 0 ||
 		cont.position.y > screenHeight || cont.position.y < 0 {

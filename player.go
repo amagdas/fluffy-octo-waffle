@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	playerSpeed        = 0.1
+	playerSpeed        = 5
 	playerSize         = 105
 	playerShotCooldown = time.Millisecond * 250
 )
