@@ -27,8 +27,15 @@ func (mover *bulletMover) onUpdate() error {
 	cont.position.x += mover.speed * math.Cos(cont.rotation)
 	cont.position.y += mover.speed * math.Sin(cont.rotation)
 
-	if cont.position.x > screenWidth || cont.position.x < 0 || cont.position.y > screenHeight || cont.position.y < 0 {
+	if cont.position.x > screenWidth || cont.position.x < 0 ||
+		cont.position.y > screenHeight || cont.position.y < 0 {
 		cont.active = false
 	}
+	cont.collisions[0].center = cont.position
+	return nil
+}
+
+func (mover *bulletMover) onCollision(other *element) error {
+	mover.container.active = false
 	return nil
 }
