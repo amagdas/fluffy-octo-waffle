@@ -12,10 +12,14 @@ type spriteRenderer struct {
 }
 
 func newSpriteRenderer(container *element, renderer *sdl.Renderer, filename string) *spriteRenderer {
-	tex := textureFromBMP(renderer, filename)
+	tex, err := loadTextureFromBMP(renderer, filename)
+	if err != nil {
+		panic(fmt.Errorf("loading texture %v: %v", filename, err))
+	}
+
 	_, _, width, height, err := tex.Query()
 	if err != nil {
-		panic(fmt.Errorf("querying texture %v", err))
+		panic(fmt.Errorf("querying texture %v: %v", filename, err))
 	}
 
 	return &spriteRenderer{
@@ -27,18 +31,7 @@ func newSpriteRenderer(container *element, renderer *sdl.Renderer, filename stri
 }
 
 func (sr *spriteRenderer) onDraw(renderer *sdl.Renderer) error {
-	x := sr.container.position.x - sr.width/2.0
-	y := sr.container.position.y - sr.height/2.0
-
-	renderer.CopyEx(
-		sr.tex,
-		&sdl.Rect{X: 0, Y: 0, W: int32(sr.width), H: int32(sr.height)},
-		&sdl.Rect{X: int32(x), Y: int32(y), W: int32(sr.width), H: int32(sr.height)},
-		sr.container.rotation,
-		&sdl.Point{X: int32(sr.width / 2), Y: int32(sr.height / 2)},
-		sdl.FLIP_NONE)
-
-	return nil
+	return drawTexture(sr.tex, sr.container.position, sr.container.rotation, renderer)
 }
 
 func (sr *spriteRenderer) onUpdate() error {
@@ -47,18 +40,4 @@ func (sr *spriteRenderer) onUpdate() error {
 
 func (sr *spriteRenderer) onCollision(other *element) error {
 	return nil
-}
-
-func textureFromBMP(renderer *sdl.Renderer, filename string) *sdl.Texture {
-	img, err := sdl.LoadBMP(filename)
-	if err != nil {
-		panic(fmt.Errorf("loading %v: %v", filename, err))
-	}
-	defer img.Free()
-
-	tex, err := renderer.CreateTextureFromSurface(img)
-	if err != nil {
-		panic(fmt.Errorf("creating texture %v: %v", filename, err))
-	}
-	return tex
 }
